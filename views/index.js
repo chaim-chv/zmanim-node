@@ -50,6 +50,22 @@ window.subscribe = async () => {
   }
 }
 
+fetch('/user', { headers: { 'content-type': 'application/json' }, credentials: 'include', method: 'POST' }).then((response) => {
+  if (response.status == 404 || response.status == 401) {
+    document.getElementById('user').innerHTML = 'משתמש: לא רשום לקבלת התראות מדפדפן זה'
+  } else {
+    response.json().then((data) => {
+      if (data.stop == false) {
+        console.log(data)
+        document.getElementById('user').innerHTML = `שלום ${data.name}, אתה מקבל התראות על שקיעה ב${data.city}. <a class="togglepush" onclick="stoppush()">להפסקת התראות</a>`
+      } else {
+        console.log(data)
+        document.getElementById('user').innerHTML = `שלום ${data.name}, נרשמת לקבל התראות על שקיעה ב${data.city}, והפסקת את ההתראות. <a class="togglepush" onclick="startpush()">להחזרת התראות</a>`
+      }
+    })
+  }
+})
+
 document.querySelector('#citt').addEventListener('keypress', function (e) {
   if (e.key === 'Enter') {
     getsun()
