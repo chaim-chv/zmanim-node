@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Arimo&display=swap');
+
+* {
+  font-family: "arimo";
+}
+
+body {
+  margin: 0;
+}
+
+.container {
+  margin: 5%;
+}
+
+.userdiv {
+  text-align: center;
+  font-size: 1.2em;
+  margin-top: -1.5em;
+}
+
+button {
+  outline: 2px #ddefff solid;
+  padding: 0.5% 3.5%;
+  margin: 14px;
+  background: #ddefff;
+  transition: 1s;
+  cursor: pointer;
+  box-shadow: none;
+  border: none;
+  border-radius: 4px;
+}
+
+button:hover {
+  outline: 2px #0c290c solid;
+}
+
+input {
+  transition: 0.5s;
+  outline: none;
+  border: none;
+  border-bottom: 2px #bbbbbb solid;
+  text-align: center;
+}
+
+input:focus {
+  border-bottom: 2px #235523 solid;
+}
+
+.title,
+.titledesc {
+  text-align: center;
+}
+
+.titledesc {
+  margin-bottom: 100px;
+}
+
+#zmanim,
+#pushes {
+  width: 50%;
+  position: absolute;
+  width: 46%;
+  height: 322px;
+  text-align: center;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 0px 24.2px rgba(0, 0, 0, 0.021), 0 0px 39.9px rgba(0, 0, 0, 0.03), 0 0px 49.1px rgba(0, 0, 0, 0.037), 0 0px 55.2px rgba(0, 0, 0, 0.043), 0 0px 63.4px rgba(0, 0, 0, 0.05), 0 0px 80.9px rgba(0, 0, 0, 0.059), 0 0px 118px rgba(0, 0, 0, 0.08);
+}
+
+#zmanim {
+  right: 2%;
+}
+
+#pushes {
+  left: 2%;
+}
+
+fieldset {
+  border: none;
+}
+
+.togglepush {
+  background-color: #f7c78f;
+  border-radius: 7px;
+  padding: 0 7px 0 7px;
+}
+
+.togglepush:hover {
+  background-color: #fadcba;
+}
+
+img {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  bottom: 1.5em;
+  left: 1.5em;
+  box-shadow: 0 0px 5.3px rgb(115, 115, 115), 0 0px 5px rgb(253, 253, 253);
+}

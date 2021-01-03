@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>זמני הלכה</title>
+    <meta name="description" content="בדיקת זמני הלכה לערים בישראל, וכן קבלת התראות לפני שקיעה" />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="userdiv">
+        <p id="user" class="user"></p>
+      </div>
+      <h2 class="title">מערכת זמני הלכה</h2>
+      <p class="titledesc">אפשר לבדוק כאן זמני הלכה בכל אחת מהערים (בארץ ישראל), <strong>וכן לקבל התראות לפני שקיעה בצורה אוטומטית לפי הבחירה שלכם!</strong></p>
+      <div id="zmanim">
+        <h3 class="subtitle">בדיקת זמני הלכה</h3>
+        <fieldset>
+          <input id="citt" name="city" class="cityinput" type="text" placeholder="הזן את העיר שלך" />
+          <br />
+          <button class="checkbutton" onclick="getsun()">קבל זמנים</button>
+          <p class="err" id="err"></p>
+          <p class="zman" id="cityname"></p>
+          <p class="zman" id="netz"></p>
+          <p class="zman" id="gra"></p>
+          <p class="zman" id="chatzos"></p>
+          <p class="zman" id="shkia"></p>
+        </fieldset>
+      </div>
+      <div id="pushes">
+        <h3 class="subtitle">הרשמה להתראות על שקיעה</h3>
+        <p class="desc">אפשר להירשם כאן לקבל פוש התראה <strong>רבע שעה לפני שקיעה בעיר שבחרתם:</strong></p>
+        <fieldset>
+          <input id="nameee" name="name" class="nameinput" type="text" placeholder="הזן את השם שלך" />
+          <input id="cityyy" name="city" class="2cityinput" type="text" placeholder="הזן את העיר שלך" />
+          <br />
+          <button class="regbutton" onclick="subscribe()">הירשם</button>
+          <p class="regtext" id="regrep"></p>
+        </fieldset>
+      </div>
+    </div>
+    <a href="https://blog.chv.ovh/contact" target="_blank"><img src="portait.jpg" alt="avatar" /></a>
+    <script src="index.js"></script>
+  </body>
+</html>
