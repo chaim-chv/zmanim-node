@@ -98,3 +98,28 @@ img {
   left: 1.5em;
   box-shadow: 0 0px 5.3px rgb(115, 115, 115), 0 0px 5px rgb(253, 253, 253);
 }
+
+.spinning-loader {
+  width: 20px;
+  height: 20px;
+  border: 5px solid rgb(6, 59, 4);
+  border-left-color: wheat;
+  border-radius: 50%;
+  background: transparent;
+  animation-name: rotate-s-loader;
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  position: relative;
+  visibility: visible;
+  margin: 0 auto;
+}
+
+@keyframes rotate-s-loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
