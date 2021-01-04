@@ -25,15 +25,6 @@ const privateVapidKey = process.env.PRIVATE_VAPID_KEY
 webPush.setVapidDetails('mailto:tmeemoot@gmail.com', publicVapidKey, privateVapidKey)
 
 app.post('/subscribe', async function (req, res) {
-  if (req.cookies.userid) {
-    const userID = req.cookies.userid
-    console.log(`user change notify settings but we find userid in cookies.. ${userID}`)
-    const client = await MongoClient.connect(dburl, { useUnifiedTopology: true })
-    const data = await client.db('main').collection('users').deleteOne({ _id: ObjectId(userID) })
-    if (data) {
-      console.log('userid deleted from DB. we will create new one for this user')
-    }
-  }
   const subscription = req.body
   if (!subscription.name || !subscription.city) { // בדיקה שהיוזר כתב שם ועיר
     res.status(401).json('name or city not declare')
@@ -46,19 +37,35 @@ app.post('/subscribe', async function (req, res) {
       res.status(401).json('wrong city...')
     } else {
       const cityname = data.results[0].address_components[0].long_name
-      const client = await MongoClient.connect(dburl, { useUnifiedTopology: true })
-      const userkeys = { name: subscription.name, city: cityname, endpoint: subscription.subscription.endpoint, expiriationTime: subscription.subscription.expiriationTime, keys: { p256dh: subscription.subscription.keys.p256dh, auth: subscription.subscription.keys.auth }, stop: false }
-      const result = await client.db('main').collection('users').insertOne(userkeys) // רושמים את היוזר במסד נתונים
-      const objid = result.insertedId // מקבלים את המזהה של היוזר שנוצר במסד נתונים
-      console.log(`userid is ${objid}, created succesfuly - name is ${subscription.name} and city is ${cityname}`)
-      res.cookie('userid', objid, { expires: new Date('2022/01/20') }) // יוצרים עוגייה עם הערך של המזהה הנ"ל
-      res.status(201).json({ city: cityname })
-      console.log('userid cookie created successfully')
-      const payload = JSON.stringify({
-        title: 'נרשמת בהצלחה, להתראות לפני שקיעה',
-        body: `נתריע לך רבע שעה לפני השקיעה ב${cityname}`
-      })
-      webPush.sendNotification(subscription.subscription, payload).catch((error) => console.error(error))
+      if (req.cookies.userid) {
+        const userID = req.cookies.userid
+        console.log(`user change notify settings but we find userid in cookies.. ${userID}`)
+        const client = await MongoClient.connect(dburl, { useUnifiedTopology: true })
+        const record = await client.db('main').collection('users').findOneAndUpdate({ _id: ObjectId(userID) }, { $set: { name: subscription.name, city: subscription.city, stop: true } })
+        if (record) {
+          console.log(`user options updated: name - ${subscription.name}, city - ${cityname}`)
+          res.status(201).json({ city: cityname })
+          const payload = JSON.stringify({
+            title: 'הגדרות ההתראה שלך השתנו בהצלחה',
+            body: `נתריע לך רבע שעה לפני השקיעה ב${cityname}`
+          })
+          webPush.sendNotification(subscription.subscription, payload).catch((error) => console.error(error))
+        }
+      } else {
+        const client = await MongoClient.connect(dburl, { useUnifiedTopology: true })
+        const userkeys = { name: subscription.name, city: cityname, endpoint: subscription.subscription.endpoint, expiriationTime: subscription.subscription.expiriationTime, keys: { p256dh: subscription.subscription.keys.p256dh, auth: subscription.subscription.keys.auth }, stop: false }
+        const result = await client.db('main').collection('users').insertOne(userkeys) // רושמים את היוזר במסד נתונים
+        const objid = result.insertedId // מקבלים את המזהה של היוזר שנוצר במסד נתונים
+        console.log(`userid is ${objid}, created succesfuly - name is ${subscription.name} and city is ${cityname}`)
+        res.cookie('userid', objid, { expires: new Date('2022/01/20') }) // יוצרים עוגייה עם הערך של המזהה הנ"ל
+        res.status(201).json({ city: cityname })
+        console.log('userid cookie created successfully')
+        const payload = JSON.stringify({
+          title: 'נרשמת בהצלחה, להתראות לפני שקיעה',
+          body: `נתריע לך רבע שעה לפני השקיעה ב${cityname}`
+        })
+        webPush.sendNotification(subscription.subscription, payload).catch((error) => console.error(error))
+      }
     }
   }
 })
