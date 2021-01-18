@@ -17,7 +17,7 @@ npm start
 
 אשמח להערות והארות!!
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/chaim-chv/node-zmanim/tree/master)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/chaim-chv/zmanim-node/tree/master)
 
 
 </div>

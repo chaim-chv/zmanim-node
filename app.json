@@ -1,8 +1,8 @@
 {
-    "name": "node-zmanim",
+    "name": "zmanim-node",
     "description": "my first nodeJS app!! made to get zmaney halacha to every city and to get push notification before sunset",
-    "repository": "https://github.com/chaim-chv/node-zmanim",
-    "logo": "https://github.com/chaim-chv/node-zmanim/views/portait.jpg",
+    "repository": "https://github.com/chaim-chv/zmanim-node",
+    "logo": "https://github.com/chaim-chv/zmanim-node/views/portait.jpg",
     "env": {
         "GOOGLE": {
             "description": "google geolocation API key"
