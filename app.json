@@ -2,16 +2,16 @@
     "name": "zmanim-node",
     "description": "my first nodeJS app!! made to get zmaney halacha to every city and to get push notification before sunset",
     "repository": "https://github.com/chaim-chv/zmanim-node",
-    "logo": "https://github.com/chaim-chv/zmanim-node/views/portait.jpg",
+    "logo": "https://github.com/chaim-chv/zmanim-node/blob/master/views/portait.jpg",
     "env": {
         "GOOGLE": {
             "description": "google geolocation API key"
         },
         "PUBLIC_VAPID_KEY": {
-            "description": "generate it with - [https://www.npmjs.com/package/web-push#command-line](https://www.npmjs.com/package/web-push#command-line)"
+            "description": "generate it with - https://www.npmjs.com/package/web-push#command-line"
         },
         "PRIVATE_VAPID_KEY": {
-            "description": "generate it with - [https://www.npmjs.com/package/web-push#command-line](https://www.npmjs.com/package/web-push#command-line)"
+            "description": "generate it with - https://www.npmjs.com/package/web-push#command-line"
         },
         "DBURL": {
             "description": "mongoDB url"
