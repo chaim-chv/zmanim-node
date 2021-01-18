@@ -16,4 +16,8 @@ npm start
 [כאן](https://tchumim.com/post/116237) אפשר לקרוא קצת על ה'פרוייקט'...
 
 אשמח להערות והארות!!
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/chaim-chv/node-zmanim/tree/master)
+
+
 </div>
