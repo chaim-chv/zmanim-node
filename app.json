@@ -8,10 +8,10 @@
             "description": "google geolocation API key"
         },
         "PUBLIC_VAPID_KEY": {
-            "description": "generate it with - https://www.npmjs.com/package/web-push#command-line"
+            "description": "generate it with - [https://www.npmjs.com/package/web-push#command-line](https://www.npmjs.com/package/web-push#command-line)"
         },
         "PRIVATE_VAPID_KEY": {
-            "description": "as above"
+            "description": "generate it with - [https://www.npmjs.com/package/web-push#command-line](https://www.npmjs.com/package/web-push#command-line)"
         },
         "DBURL": {
             "description": "mongoDB url"

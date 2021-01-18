@@ -17,6 +17,7 @@ npm start
 
 אשמח להערות והארות!!
 
+להתקנה מהירה בהרוקו - לחצו על הכפתור והגדירו את המפתחות המתאימים במקומות הנכונים (יש תיאור לכל מפתח):
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/chaim-chv/zmanim-node/tree/master)
 
 
