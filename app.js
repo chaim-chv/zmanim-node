@@ -7,9 +7,12 @@ const fetch = require('node-fetch')
 const schedule = require('node-schedule')
 const cookieParser = require('cookie-parser')
 const KosherZmanim = require('kosher-zmanim')
+const NodeGeocoder = require('node-geocoder')
+const geocoder = NodeGeocoder({ provider: 'openstreetmap' })
 const webPush = require('web-push')
 const MongoClient = require('mongodb').MongoClient
 const { ObjectId } = require('mongodb')
+const { resolveSoa } = require('dns')
 const app = express()
 const port = process.env.PORT || 5000
 
@@ -24,57 +27,71 @@ const publicVapidKey = process.env.PUBLIC_VAPID_KEY
 const privateVapidKey = process.env.PRIVATE_VAPID_KEY
 webPush.setVapidDetails('mailto:tmeemoot@gmail.com', publicVapidKey, privateVapidKey)
 
-app.post('/subscribe', async function (req, res) {
-  const subscription = req.body
-  if (!subscription.name || !subscription.city) { // בדיקה שהיוזר כתב שם ועיר
-    res.status(401).json('name or city not declare')
+app.post("/subscribe", async function (req, res) {
+  const subscription = req.body;
+  if (!subscription.name || !subscription.city) {
+    // בדיקה שהיוזר כתב שם ועיר
+    res.status(401).json("name or city not declare");
   } else {
-    const morefix = encodeURIComponent(subscription.city) // שש השורות הבאות - בדיקה שהיוזר לא חירטט עיר
-    const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?language=iw&address=' + morefix + ',%D7%99%D7%A9%D7%A8%D7%90%D7%9C&key=' + process.env.GOOGLE)
-    const data = await response.json()
-    if (data.status == 'ZERO_RESULTS') {
-      console.log('not an city')
-      res.status(401).json('wrong city...')
+    const locates = await geocoder.geocode(subscription.city); // ארבע השורות הבאות - בדיקה שהיוזר לא חירטט עיר
+    if (!Array.isArray(locates) || !locates.length) {
+      console.log("not an city");
+      return "nocity";
     } else {
-      const cityname = data.results[0].address_components[0].long_name
+      const latitude = locates[0].latitude;
+      const longitude = locates[0].longitude;
+      const cityname = locates[0].city;
       if (req.cookies.userid) {
-        const userID = req.cookies.userid
-        console.log(`user change notify settings but we find userid in cookies.. ${userID}`)
-        const client = await MongoClient.connect(dburl, { useUnifiedTopology: true })
-        const record = await client.db('main').collection('users').findOneAndUpdate({ _id: ObjectId(userID) }, { $set: { name: subscription.name, city: subscription.city, stop: true } })
+        const userID = req.cookies.userid;
+        console.log(`user change notify settings but we find userid in cookies.. ${userID}`);
+        const client = await MongoClient.connect(dburl, { useUnifiedTopology: true });
+        const record = await client.db("main").collection("users").findOneAndUpdate({ _id: ObjectId(userID) }, { $set: { name: subscription.name, city: subscription.city, lat: latitude, long: longitude } });
         if (record) {
-          console.log(`user options updated: name - ${subscription.name}, city - ${cityname}`)
-          res.status(201).json({ city: cityname })
-          const payload = JSON.stringify({
-            title: 'הגדרות ההתראה שלך השתנו בהצלחה',
-            body: `נתריע לך רבע שעה לפני השקיעה ב${cityname}`
-          })
-          webPush.sendNotification(subscription.subscription, payload).catch((error) => console.error(error))
+          console.log(`user options updated: name - ${subscription.name}, city - ${cityname}`);
+          res.status(201).json({ city: cityname });
+          const payload = JSON.stringify({ title: "הגדרות ההתראה שלך השתנו בהצלחה", body: `נתריע לך רבע שעה לפני השקיעה ב${cityname}` });
+          webPush.sendNotification(subscription.subscription, payload).catch((error) => console.error(error));
         }
       } else {
-        const client = await MongoClient.connect(dburl, { useUnifiedTopology: true })
-        const userkeys = { name: subscription.name, city: cityname, endpoint: subscription.subscription.endpoint, expiriationTime: subscription.subscription.expiriationTime, keys: { p256dh: subscription.subscription.keys.p256dh, auth: subscription.subscription.keys.auth }, stop: false }
-        const result = await client.db('main').collection('users').insertOne(userkeys) // רושמים את היוזר במסד נתונים
-        const objid = result.insertedId // מקבלים את המזהה של היוזר שנוצר במסד נתונים
-        console.log(`userid is ${objid}, created succesfuly - name is ${subscription.name} and city is ${cityname}`)
-        res.cookie('userid', objid, { expires: new Date('2022/01/20') }) // יוצרים עוגייה עם הערך של המזהה הנ"ל
-        res.status(201).json({ city: cityname })
-        console.log('userid cookie created successfully')
+        const client = await MongoClient.connect(dburl, { useUnifiedTopology: true });
+        const userkeys = { name: subscription.name, city: cityname, lat: latitude, long: longitude, endpoint: subscription.subscription.endpoint, expiriationTime: subscription.subscription.expiriationTime, keys: { p256dh: subscription.subscription.keys.p256dh, auth: subscription.subscription.keys.auth }, stop: false };
+        const result = await client.db("main").collection("users").insertOne(userkeys); // רושמים את היוזר במסד נתונים
+        const objid = result.insertedId; // מקבלים את המזהה של היוזר שנוצר במסד נתונים
+        console.log(`userid is ${objid}, created succesfuly - name is ${subscription.name} and city is ${cityname}`);
+        res.cookie("userid", objid, { expires: new Date("2022/01/20") }); // יוצרים עוגייה עם הערך של המזהה הנ"ל
+        res.status(201).json({ city: cityname });
+        console.log("userid cookie created successfully");
         const payload = JSON.stringify({
-          title: 'נרשמת בהצלחה, להתראות לפני שקיעה',
-          body: `נתריע לך רבע שעה לפני השקיעה ב${cityname}`
-        })
-        webPush.sendNotification(subscription.subscription, payload).catch((error) => console.error(error))
+          title: "נרשמת בהצלחה, להתראות לפני שקיעה",
+          body: `נתריע לך רבע שעה לפני השקיעה ב${cityname}`,
+        });
+        webPush.sendNotification(subscription.subscription, payload).catch((error) => console.error(error));
       }
     }
   }
-})
+});
 
 app.use(express.static(path.join(__dirname, 'views')))
 
 app.get('/', (req, res) => {
   res.render('index')
 })
+
+app.get("/api", async function (req, res) {
+  console.log(`new api call..`);
+  let city = req.query.city;
+  if (!city) {
+    console.log(`city not declared`);
+    res.status(400).json(`you have to pass cityname to the request..`);
+  } else {
+    const zmanim = await gettimesforcity(city);
+    if (zmanim == "nocity") {
+      res.status(400).json("city not found... 😥😥");
+    } else {
+      res.status(200).json(zmanim);
+    }
+  }
+});
 
 // כשהאתר עולה, פונקציה בפרונטאנד מבקשת מהשרת נתונים על המשתמש, לשורה העליונה של האתר
 app.post('/user', async function (req, res) {
@@ -140,7 +157,8 @@ app.post('/', async function (req, res) {
   if (zmanim == 'nocity') {
     res.status(404).json(`no city named ${req.body.city}`)
   } else {
-    console.log(`the answer is ${zmanim}. sending to user`)
+    console.log(`got the answer... sending to user`)
+    console.log(zmanim)
     res.status(200).json({ city: zmanim.cityname, zmanim: zmanim })
   }
 })
@@ -152,7 +170,8 @@ app.listen(port, () => {
 async function push (id) {
   const client = await MongoClient.connect(dburl, { useUnifiedTopology: true })
   const doc = await client.db('main').collection('users').findOne({ _id: ObjectId(id) })
-  let sunset = await getsunforcity(doc.city)
+  let sunset = await gettimesforcity(doc.city)
+  sunset = sunset.shkia
   sunset = sunset.toString()
   sunset = sunset.slice(16, 21)
   const payload = JSON.stringify({
@@ -164,22 +183,17 @@ async function push (id) {
 }
 
 async function getsunforcity (citly) {
-  const morefix = encodeURIComponent(citly)
-  const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?language=iw&address=' + morefix + ',%D7%99%D7%A9%D7%A8%D7%90%D7%9C&key=' + process.env.GOOGLE)
-  const data = await response.json()
-  if (data.status == 'ZERO_RESULTS') {
+  const geolocation = await geocoder.geocode(citly)
+  if (!Array.isArray(geolocation) || !geolocation.length) {
     console.log('not an city')
     return 'nocity'
   } else {
-    const latitude = data.results[0].geometry.location.lat
-    const longitude = data.results[0].geometry.location.lng
-    const cityname = data.results[0].address_components[0].long_name
     const options = {
       date: Date.now(),
       timeZoneId: 'Asia/Jerusalem',
-      locationName: cityname,
-      latitude: latitude,
-      longitude: longitude,
+      locationName: geolocation[0].city,
+      latitude: geolocation[0].latitude,
+      longitude: geolocation[0].longitude,
       elevation: 0,
       complexZmanim: (boolean = false)
     }
@@ -191,22 +205,17 @@ async function getsunforcity (citly) {
 }
 
 async function gettimesforcity (citly) {
-  const morefix = encodeURIComponent(citly)
-  const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?language=iw&address=' + morefix + ',%D7%99%D7%A9%D7%A8%D7%90%D7%9C&key=' + process.env.GOOGLE)
-  const data = await response.json()
-  if (data.status == 'ZERO_RESULTS') {
+  const geolocation = await geocoder.geocode(citly)
+  if (!Array.isArray(geolocation) || !geolocation.length) {
     console.log('not an city')
     return 'nocity'
   } else {
-    const latitude = data.results[0].geometry.location.lat
-    const longitude = data.results[0].geometry.location.lng
-    const cityname = data.results[0].address_components[0].long_name
     const options = {
       date: Date.now(),
       timeZoneId: 'Asia/Jerusalem',
-      locationName: cityname,
-      latitude: latitude,
-      longitude: longitude,
+      locationName: geolocation[0].city,
+      latitude: geolocation[0].latitude,
+      longitude: geolocation[0].longitude,
       elevation: 0,
       complexZmanim: (boolean = false)
     }
@@ -226,9 +235,9 @@ async function gettimesforcity (citly) {
     gra = moment(gra).format('kk:mm:ss')
     chatzos = moment(chatzos).format('kk:mm:ss')
     shkia = moment(shkia).format('kk:mm:ss')
-    const zmanim = { cityname: cityname, netz: netz, gra: gra, chatzos: chatzos, shkia: shkia }
+    const zmanim = { cityname: geolocation[0].city, netz: netz, gra: gra, chatzos: chatzos, shkia: shkia }
     return zmanim
-  }
+    }
 }
 
 async function checksun () { // חישוב הפושים לכל אחד מהיוזרים במסד נתונים, ויצירת טיימאאוטים לכל אחד
