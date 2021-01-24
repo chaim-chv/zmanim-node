@@ -22,6 +22,7 @@ app.use(cookieParser())
 app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(cors())
+app.options('*', cors())
 
 const publicVapidKey = process.env.PUBLIC_VAPID_KEY
 const privateVapidKey = process.env.PRIVATE_VAPID_KEY
