@@ -24,18 +24,30 @@
 
 ## התקנה לוקלית
 כדי להפעיל אצלכם במחשב, הורידו את הריפו 
+</div>
+
 ```
 git clone https://github.com/chaim-chv/zmanim-node.git && cd zmanim-node
 ```
+<div dir="rtl" style="text-align:right">
+
 והכניסו את המפתחות המתאימים בקובץ env (צריך להכניס את מפתחות ה-VAPID - מפיקים אותם בצורה פשוטה כמו שמוסבר [כאן](https://www.npmjs.com/package/web-push#command-line). חוץ מזה צריך להכניס גם כתובת URI של מסד נתונים MongoDB) ואז התקנה של החבילות הנצרכות ב-npm:
+</div>
 
 ```
 npm install
 ```
+<div dir="rtl" style="text-align:right">
+
 ואז
+</div>
+
 ```
 npm start
 ```
+
+<div dir="rtl" style="text-align:right">
+
 יפעיל שרת לוקאלי בפורט 5000 אצלכם (או שתגדירו אחרת).
 
 ## הפעלה בהרוקו
@@ -45,18 +57,26 @@ npm start
 אני לא ממליץ להתקין בהרוקו ישירות מהכפתור התקנה הזה (כיוון שזה יגרום לכך שלא תוכלו להוריד אחרי זה את הגיט של האפליקציה אליכם למחשב כדי לערוך)<br>
 ממליץ לעבוד עם גיט מעיקרא, כך תוכלו לשנות ככל העולה על רוחכם (האפליקציה ששמתי בהרוקו שואבת את ה-branch שלה מכאן)
 ככה תעשו את זה:
+</div>
+
 ```
 git clone https://github.com/chaim-chv/zmanim-node.git && cd zmanim-node
 ```
+<div dir="rtl" style="text-align:right">
+
 תערכו אצלכם מה שאתם רוצים בקוד, ושימו לב שכל עריכה אתם מוסיפים לגיט.
 
 כעת צרו אפליקציה חדשה עם [Heroku-CLI](https://devcenter.heroku.com/articles/heroku-cli):
+</div>
+
 ```
 heroku create <app-name>
 ```
+<div dir="rtl" style="text-align:right">
+
 ותדחפו אליה את התוכן:
+</div>
+
 ```
 git push heroku master
 ```
-
-</div>
