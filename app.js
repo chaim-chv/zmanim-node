@@ -200,7 +200,7 @@ async function getsunforcity (citly) {
     }
     let sunset = KosherZmanim.getZmanimJson(options).BasicZmanim.Sunset
     sunset = new Date(sunset)
-    sunset = moment(sunset).utcOffset('+02:00')
+    sunset = moment(sunset).utcOffset('+03:00')
     return sunset
   }
 }
@@ -228,10 +228,10 @@ async function gettimesforcity (citly) {
     gra = new Date(gra)
     chatzos = new Date(chatzos)
     shkia = new Date(shkia)
-    netz = moment(netz).utcOffset('+02:00')
-    gra = moment(gra).utcOffset('+02:00')
-    chatzos = moment(chatzos).utcOffset('+02:00')
-    shkia = moment(shkia).utcOffset('+02:00')
+    netz = moment(netz).utcOffset('+03:00')
+    gra = moment(gra).utcOffset('+03:00')
+    chatzos = moment(chatzos).utcOffset('+03:00')
+    shkia = moment(shkia).utcOffset('+03:00')
     netz = moment(netz).format('kk:mm:ss')
     gra = moment(gra).format('kk:mm:ss')
     chatzos = moment(chatzos).format('kk:mm:ss')
@@ -252,7 +252,7 @@ async function checksun () { // חישוב הפושים לכל אחד מהיוז
       const id = user._id
       const timeforcity = await getsunforcity(city)
       let thistime = new Date(Date.now())
-      thistime = moment(thistime).utcOffset('+02:00')
+      thistime = moment(thistime).utcOffset('+03:00')
       let destime = moment.duration(timeforcity - thistime).asMilliseconds()
       destime = destime - 900000 // הורדה של רבע שעה
       if (destime < 0) {
