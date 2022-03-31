@@ -28,7 +28,7 @@ const publicVapidKey = process.env.PUBLIC_VAPID_KEY
 const privateVapidKey = process.env.PRIVATE_VAPID_KEY
 webPush.setVapidDetails('mailto:tmeemoot@gmail.com', publicVapidKey, privateVapidKey)
 
-const utcOffsetHours = '+02:00';
+const utcOffsetHours = '+03:00';
 
 app.post("/subscribe", async function (req, res) {
   const subscription = req.body;
